@@ -1,15 +1,36 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// prisma/schema.prisma
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:@localhost:3306/cocktails_db"
+}
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model Cocktail {
+  id           Int                   @id @default(autoincrement())
+  name         String
+  category     String
+  instructions String
+  ingredients  CocktailIngredient[]
+}
+
+model Ingredient {
+  id          Int                   @id @default(autoincrement())
+  name        String
+  description String
+  isAlcohol   Boolean
+  imageUrl    String
+  cocktails   CocktailIngredient[]
+}
+
+model CocktailIngredient {
+  id           Int       @id @default(autoincrement())
+  cocktail     Cocktail  @relation(fields: [cocktailId], references: [id])
+  cocktailId   Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  quantity     String
 }
